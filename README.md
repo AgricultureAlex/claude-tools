@@ -11,7 +11,7 @@ Replaces the Claude Code status line with live usage bars.
 ### What it shows
 
 ```
-ctx [████████████░░░] 82%  5h [██████░░░░░░░░░] 42%  7d [░░░░░░░░░░░░░░░] 2%  $0.00 over
+ctx [████████████░░░] 82%  5h [██████░░░░░░░░░] 42%  7d [░░░░░░░░░░░░░░░] 2%  $0.00 (this chat)
 ```
 
 | Column | Meaning | Resets |
@@ -19,11 +19,11 @@ ctx [████████████░░░] 82%  5h [██████�
 | `ctx` | Context window fill for this conversation | New conversation |
 | `5h` | 5-hour API rate-limit used | Rolling 5-hour window |
 | `7d` | 7-day API rate-limit used | Rolling 7-day window |
-| `$X.XX over` | Usage credit overage this conversation | New conversation |
+| `$X.XX (this chat)` | Estimated API compute cost this conversation | New conversation |
 
 **Colors:** green below 50%, amber 50–80%, red 80%+.
 
-The `over` label is always visible so the column is self-labeling from session start (`$0.00 over` before any overage accrues).
+The cost column shows the estimated API compute cost of this conversation (what the token usage would cost at API rates). It is an estimate, not the amount billed — Anthropic's billing system accounts for your subscription separately.
 
 ### Responsive layout
 
@@ -31,18 +31,18 @@ The display adapts as your terminal narrows. `%` signs are dropped before the co
 
 **Wide — bars:**
 ```
-ctx [████████████░░░] 82%  5h [██░░░░░░░░░░░░░] 18%  7d [░░░░░░░░░░░░░░░] 2%  $0.00 over
+ctx [████████████░░░] 82%  5h [██░░░░░░░░░░░░░] 18%  7d [░░░░░░░░░░░░░░░] 2%  $0.00 (this chat)
 ```
 
 **Medium — compact:**
 ```
-ctx 82%  5h 18%  7d 2%  $0.00 over
+ctx 82%  5h 18%  7d 2%  $0.00 (this chat)
 ```
 
 **Narrow — two rows:**
 ```
 ctx  5h  7d
-82%  18%  2%  $0.00 over
+82%  18%  2%  $0.00 (this chat)
 ```
 
 **Very narrow — values only, no `%`:**
