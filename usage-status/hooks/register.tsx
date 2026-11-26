@@ -17,41 +17,28 @@ function barColor(pct: number): string {
   return '#16a34a'                 // green-600: 4.5:1 on white, 4.7:1 on black
 }
 
+// Numeric-only forms, most to least verbose.
+function costNums(usd: number): string[] {
+  const f = (n: number, d: number) => `$${n.toFixed(d)}`
+  if (usd >= 1000) return [f(usd, 0), `${(usd / 1000).toFixed(1)}K`, `${Math.round(usd / 1000)}K`]
+  if (usd >= 100)  return [f(usd, 0), `${Math.round(usd)}`]
+  if (usd >= 1)    return [f(usd, 2), f(usd, 1), usd.toFixed(1), `${Math.round(usd)}`]
+  if (usd >= 0.01) return [f(usd, 2), usd.toFixed(2), usd.toFixed(1)]
+  return [f(usd, 2), '$0']  // $0.00 at session start
+}
+
 // All representations of a cost from most to least verbose, ending with '' (omit).
-// $3.36 over → $3.36 → $3.4 → 3.4 → 3 → ''
-// $2340 over → 2.3K → 2K → ''
-// $0.00 over shown at session start before any overage
+// Labels applied only to the most verbose numeric form; shorter forms have no label.
+// $8.08 over (this chat) → $8.08 over (chat) → $8.08 (cht) → $8.08 → $8.1 → 8.1 → 8 → ''
+// $0.00 over (this chat) shown before any overage accrues.
 function costVariants(usd: number): string[] {
-  const $ = (n: number, d: number) => `$${n.toFixed(d)}`
-  const ov = (s: string) => `${s} over`
-  const vs: string[] = []
-  if (usd >= 1000) {
-    vs.push(ov($(usd, 0)))                    // $2340 over
-    vs.push($(usd, 0))                        // $2340
-    vs.push(`${(usd / 1000).toFixed(1)}K`)   // 2.3K
-    vs.push(`${Math.round(usd / 1000)}K`)    // 2K
-  } else if (usd >= 100) {
-    vs.push(ov($(usd, 0)))                    // $234 over
-    vs.push($(usd, 0))                        // $234
-    vs.push(`${Math.round(usd)}`)             // 234
-  } else if (usd >= 1) {
-    vs.push(ov($(usd, 2)))                    // $3.36 over
-    vs.push($(usd, 2))                        // $3.36
-    vs.push($(usd, 1))                        // $3.4
-    vs.push(usd.toFixed(1))                   // 3.4
-    vs.push(`${Math.round(usd)}`)             // 3
-  } else if (usd >= 0.01) {
-    vs.push(ov($(usd, 2)))                    // $0.34 over
-    vs.push($(usd, 2))                        // $0.34
-    vs.push(usd.toFixed(2))                   // 0.34
-    vs.push(usd.toFixed(1))                   // 0.3
-  } else {
-    vs.push(ov($(usd, 2)))                    // $0.00 over (session start / sub-cent)
-    vs.push($(usd, 2))                        // $0.00
-    vs.push('$0')                             // $0
-  }
-  vs.push('')  // omit entirely
-  return [...new Set(vs)]
+  const nums = costNums(usd)
+  const labels = [' over (this chat)', ' over (chat)', ' (cht)', '']
+  return [...new Set([
+    ...labels.map(l => nums[0] + l),  // verbose number + each label
+    ...nums.slice(1),                  // shorter numbers, no label
+    '',                                // omit entirely
+  ])]
 }
 
 export const register: Register = on => {
