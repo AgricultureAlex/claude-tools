@@ -24,16 +24,16 @@ function costNums(usd: number): string[] {
   if (usd >= 100)  return [f(usd, 0), `${Math.round(usd)}`]
   if (usd >= 1)    return [f(usd, 2), f(usd, 1), usd.toFixed(1), `${Math.round(usd)}`]
   if (usd >= 0.01) return [f(usd, 2), usd.toFixed(2), usd.toFixed(1)]
-  return [f(usd, 2), '$0']  // $0.00 at session start
+  return [f(usd, 2), '$0', '0']  // $0.00 at session start
 }
 
 // All representations of a cost from most to least verbose, ending with '' (omit).
 // Labels applied only to the most verbose numeric form; shorter forms have no label.
-// $8.08 over (this chat) → $8.08 over (chat) → $8.08 (cht) → $8.08 → $8.1 → 8.1 → 8 → ''
-// $0.00 over (this chat) shown before any overage accrues.
+// $8.08 (this chat) → $8.08 (chat) → $8.08 (cht) → $8.08 → $8.1 → 8.1 → 8 → ''
+// $0.00 (this chat) shown at session start (cost = raw API compute, not just overage).
 function costVariants(usd: number): string[] {
   const nums = costNums(usd)
-  const labels = [' over (this chat)', ' over (chat)', ' (cht)', '']
+  const labels = [' (this chat)', ' (chat)', ' (cht)', '']
   return [...new Set([
     ...labels.map(l => nums[0] + l),  // verbose number + each label
     ...nums.slice(1),                  // shorter numbers, no label
