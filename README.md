@@ -6,7 +6,12 @@ A collection of Claude Code mods.
 
 ## usage-status
 
-Replaces the Claude Code status line with live usage bars.
+Replaces the Claude Code status line with live (approximate) usage
+and context dashboard in a responsive layout. A picture is worth a thousand words:
+![Screenshot 2026-11-26 at 12.53.51 PM.png](usage-status/docs/Screenshot%202026-11-26%20at%2012.53.51%E2%80%AFPM.png)
+
+And a video demonstrating the responsive layout:
+[Screen Recording 2026-11-26 at 12.54.47 PM.mov](usage-status/docs/Screen%20Recording%202026-11-26%20at%2012.54.47%E2%80%AFPM.mov)
 
 ### What it shows
 
@@ -24,32 +29,6 @@ ctx [████████████░░░] 82%  5h [██████�
 **Colors:** green below 50%, amber 50–80%, red 80%+.
 
 The cost column shows the estimated API compute cost of this conversation (what the token usage would cost at API rates). It is an estimate, not the amount billed — Anthropic's billing system accounts for your subscription separately.
-
-### Responsive layout
-
-The display adapts as your terminal narrows. `%` signs are dropped before the cost label is ever removed.
-
-**Wide — bars:**
-```
-ctx [████████████░░░] 82%  5h [██░░░░░░░░░░░░░] 18%  7d [░░░░░░░░░░░░░░░] 2%  $0.00 (this chat)
-```
-
-**Medium — compact:**
-```
-ctx 82%  5h 18%  7d 2%  $0.00 (this chat)
-```
-
-**Narrow — two rows:**
-```
-ctx  5h  7d
-82%  18%  2%  $0.00 (this chat)
-```
-
-**Very narrow — values only, no `%`:**
-```
-ctx  5h  7d
-82   18   2  $0
-```
 
 ### Install
 
