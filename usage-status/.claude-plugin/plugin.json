@@ -1,0 +1,6 @@
+{
+  "name": "usage-status",
+  "version": "0.1.0",
+  "description": "Status line showing context window, 5h and 7d rate-limit usage bars",
+  "types": "./types/index.d.ts"
+}
