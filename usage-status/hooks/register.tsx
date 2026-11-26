@@ -18,29 +18,37 @@ function barColor(pct: number): string {
 }
 
 // All representations of a cost from most to least verbose, ending with '' (omit).
-// $2.34 → $2.4 → 2.4 → 2 → ''
-// $2340 → 2.3K → 2K → ''
+// $3.36 over → $3.36 → $3.4 → 3.4 → 3 → ''
+// $2340 over → 2.3K → 2K → ''
+// $0.00 over shown at session start before any overage
 function costVariants(usd: number): string[] {
+  const $ = (n: number, d: number) => `$${n.toFixed(d)}`
+  const ov = (s: string) => `${s} over`
   const vs: string[] = []
   if (usd >= 1000) {
-    vs.push(`$${Math.round(usd)}`)            // $2340
-    vs.push(`${(usd / 1000).toFixed(1)}K`)    // 2.3K
-    vs.push(`${Math.round(usd / 1000)}K`)     // 2K
+    vs.push(ov($(usd, 0)))                    // $2340 over
+    vs.push($(usd, 0))                        // $2340
+    vs.push(`${(usd / 1000).toFixed(1)}K`)   // 2.3K
+    vs.push(`${Math.round(usd / 1000)}K`)    // 2K
   } else if (usd >= 100) {
-    vs.push(`$${Math.round(usd)}`)            // $234
+    vs.push(ov($(usd, 0)))                    // $234 over
+    vs.push($(usd, 0))                        // $234
     vs.push(`${Math.round(usd)}`)             // 234
   } else if (usd >= 1) {
-    vs.push(`$${usd.toFixed(2)}`)             // $3.36
-    vs.push(`$${usd.toFixed(1)}`)             // $3.4
+    vs.push(ov($(usd, 2)))                    // $3.36 over
+    vs.push($(usd, 2))                        // $3.36
+    vs.push($(usd, 1))                        // $3.4
     vs.push(usd.toFixed(1))                   // 3.4
     vs.push(`${Math.round(usd)}`)             // 3
   } else if (usd >= 0.01) {
-    vs.push(`$${usd.toFixed(2)}`)             // $0.34
+    vs.push(ov($(usd, 2)))                    // $0.34 over
+    vs.push($(usd, 2))                        // $0.34
     vs.push(usd.toFixed(2))                   // 0.34
     vs.push(usd.toFixed(1))                   // 0.3
   } else {
-    vs.push(`$${usd.toFixed(3)}`)             // $0.005
-    vs.push(usd.toFixed(2))                   // 0.01
+    vs.push(ov($(usd, 2)))                    // $0.00 over (session start / sub-cent)
+    vs.push($(usd, 2))                        // $0.00
+    vs.push('$0')                             // $0
   }
   vs.push('')  // omit entirely
   return [...new Set(vs)]
@@ -75,8 +83,7 @@ export const register: Register = on => {
     if (weekPct !== null) segs.push({ label: '7d', pct: weekPct })
     const count = segs.length
 
-    const showCost = costUsd !== null && costUsd > 0.0005
-    const costs = showCost ? costVariants(costUsd!) : ['']
+    const costs = costVariants(costUsd ?? 0)
 
     // --- BAR MODE ---
     // Overhead per seg: label + "[ ]"(3) + " X%"(2–5) ≈ 11; plus 2-char sep between segs.
